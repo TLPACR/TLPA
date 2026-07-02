@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabernáculo La Puerta Abierta</title>
+    
+    <!-- Metaetiquetas para optimizar la URL en buscadores y redes sociales -->
+    <meta name="description" content="Sitio web oficial de la comunidad Tabernáculo La Puerta Abierta.">
+    <link rel="canonical" href="https://vercel.app">
+
+    <!-- Fuente Tipográfica Moderna (Inter) -->
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================
+           1. CONFIGURACIÓN GLOBAL Y VARIABLES (MODOS)
+           ========================================== */
+        :root {
+            /* Modo Oscuro (Por defecto) - Degradado azul de alto contraste */
+            --color-fondo: linear-gradient(135deg, #020617 0%, #1e3a8a 45%, #3b82f6 100%);
+            --color-texto: #ffffff;
+            --color-texto-secundario: rgba(255, 255, 255, 0.7);
+            --bg-glass: rgba(255, 255, 255, 0.07);
+            --bg-dock: rgba(255, 255, 255, 0.18);
+            --borde-glass: rgba(255, 255, 255, 0.25);
+            --texto-titulo: linear-gradient(to right, #ffffff, #93c5fd);
+            --sombra: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Detección automática del Modo Claro del sistema operativo */
+        @media (prefers-color-scheme: light) {
+            :root {
+                /* Modo Claro - Degradado azul cielo dinámico */
+                --color-fondo: linear-gradient(135deg, #eff6ff 0%, #bfdbfe 50%, #60a5fa 100%);
+                --color-texto: #1e3a8a;
+                --color-texto-secundario: rgba(30, 58, 138, 0.7);
+                --bg-glass: rgba(30, 58, 138, 0.06);
+                --bg-dock: rgba(30, 58, 138, 0.12);
+                --borde-glass: rgba(30, 58, 138, 0.2);
+                --texto-titulo: linear-gradient(to right, #1e3a8a, #1d4ed8);
+                --sombra: rgba(30, 58, 138, 0.15);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            color: var(--color-texto);
+            background: var(--color-fondo);
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+
+        .wrapper-web {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* ==========================================
+           2. BARRA DE NAVEGACIÓN SUPERIOR (NAVBAR)
+           ========================================== */
+        .navbar {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            border-radius: 20px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--borde-glass);
+            box-shadow: 0 4px 30px var(--sombra);
+        }
+
+        .logo-link {
+            text-decoration: none;
+            color: inherit;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--color-texto-secundario);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-texto);
+        }
+
+        /* ==========================================
+           3. SECCIÓN DE CONTENIDO PRINCIPAL (HERO)
+           ========================================== */
+        .contenido-hero {
+            text-align: center;
+            max-width: 700px;
+            margin-top: 80px;
+            margin-bottom: auto;
+            padding: 0 20px;
+        }
+
+        .contenido-hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: var(--texto-titulo);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .contenido-hero p {
+            font-size: 1.1rem;
+            color: var(--color-texto-secundario);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* ==========================================
+           4. EL DOCK TRANSLÚCIDO ESTILO iOS (FOOTER)
+           ========================================== */
+        .contenedor-dock {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding-top: 40px;
+            padding-bottom: 20px;
+            position: sticky;
+            bottom: 20px;
+        }
+
+        .ios-dock {
+            display: flex;
+            gap: 18px;
+            padding: 14px 28px;
+            border-radius: 35px;
+            background: var(--bg-dock); 
+            backdrop-filter: blur(30px); 
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--borde-glass);
+            box-shadow: 0 20px 40px var(--sombra);
+        }
+
+        .dock-item {
+            width: 55px;
+            height: 55px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 26px;
+            text-decoration: none;
+            background: var(--bg-glass);
+            border: 1px solid var(--borde-glass);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .dock-item:hover {
+            transform: scale(1.25) translateY(-12px);
+        }
+
+        /* Ajustes responsivos para pantallas móviles */
+        @media (max-width: 600px) {
+            .navbar { padding: 12px 20px; }
+            .contenido-hero h1 { font-size: 2rem; }
+            .nav-links { gap: 15px; }
+            .nav-links a { font-size: 0.85rem; }
+            .logo-link { font-size: 1rem; }
+            .ios-dock { gap: 12px; padding: 10px 18px; }
+            .dock-item { width: 50px; height: 50px; font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper-web">
+        
+        <!-- Barra de Navegación -->
+        <header class="navbar">
+            <a href="https://vercel.app" class="logo-link">⛪ Tabernáculo La Puerta Abierta</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="https://vercel.app">Inicio</a></li>
+                    <li><a href="https://vercel.app/acceder">Acceder</a></li>
+                    <li><a href="https://vercel.app/registro">Registro</a></li>
+                    <li><a href="https://vercel.app/contacto">Contacto</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Contenido Central -->
+        <main class="contenido-hero">
+            <h1>Bienvenidos a Nuestra Comunidad</h1>
+            <p>La apariencia visual de este sitio se sincroniza automáticamente con la configuración de tu dispositivo. Explora nuestras plataformas oficiales utilizando el menú superior o los accesos rápidos del dock inferior.</p>
+        </main>
+
+        <!-- El menú inferior Dock translúcido -->
+        <footer class="contenedor-dock">
+            <nav class="ios-dock">
+                <a href="https://vercel.app/transmision" class="dock-item" title="Transmisión">📺</a>
+                <a href="https://vercel.app/lecturas" class="dock-item" title="Lecturas">📖</a>
+                <a href="https://vercel.app/eventos" class="dock-item" title="Eventos">📅</a>
+                <a href="https://vercel.app/ubicacion" class="dock-item" title="Ubicación">📍</a>
+            </nav>
+        </footer>
+
+    </div>
+
+</body>
+</html>
