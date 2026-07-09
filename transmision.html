@@ -14,7 +14,6 @@
            1. CONFIGURACIÓN GLOBAL Y VARIABLES (MODOS)
            ========================================== */
         :root {
-            /* Modo Oscuro (Por defecto) - Negro puro sin transparencias */
             --color-fondo-base: #000000;
             --color-fondo: #000000;
             --color-texto: #ffffff;
@@ -24,10 +23,8 @@
             --sombra: rgba(0, 0, 0, 0.9);
         }
 
-        /* Detección automática del Modo Claro del sistema operativo */
         @media (prefers-color-scheme: light) {
             :root {
-                /* Modo Claro - Blanco cálido suave y elegante */
                 --color-fondo-base: #fcfbf7;
                 --color-fondo: #fcfbf7;
                 --color-texto: #1c1917;
@@ -80,7 +77,6 @@
         h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 700; }
         p { color: var(--color-texto-secundario); font-size: 1rem; margin-bottom: 35px; }
         
-        /* Grid responsiva para organizar los 2 canales en paralelo */
         .grid-reproductores {
             display: flex;
             flex-wrap: wrap;
@@ -103,18 +99,17 @@
             color: var(--color-texto);
         }
 
-        /* Envoltura Plyr para forzar bordes redondeados y estilo unificado */
         .plyr-wrap {
             border-radius: 20px;
             overflow: hidden;
             border: 1px solid var(--borde-glass);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: #000;
         }
         
         .enlace-volver { display: inline-block; margin-top: 35px; color: var(--color-texto-secundario); text-decoration: none; font-size: 0.9rem; }
         .enlace-volver:hover { color: var(--color-texto); }
 
-        /* Ajustes específicos para que Plyr luzca perfecto en tu diseño moderno */
         .plyr { --plyr-color-main: #00bfff; }
     </style>
 </head>
@@ -129,7 +124,8 @@
                 <div class="canal-box">
                     <h3>Principal / Canal 1</h3>
                     <div class="plyr-wrap">
-                        <video id="video-canal1" controls crossorigin playsinline></video>
+                        <!-- preload="none": Evita la descarga automática del video al abrir la web -->
+                        <video id="video-canal1" controls crossorigin playsinline preload="none"></video>
                     </div>
                 </div>
                 
@@ -137,7 +133,8 @@
                 <div class="canal-box">
                     <h3>Secundario / Canal 2</h3>
                     <div class="plyr-wrap">
-                        <video id="video-canal2" controls crossorigin playsinline></video>
+                        <!-- preload="none": Evita la descarga automática del video al abrir la web -->
+                        <video id="video-canal2" controls crossorigin playsinline preload="none"></video>
                     </div>
                 </div>
             </div>
@@ -146,13 +143,12 @@
         </div>
     </div>
 
-    <!-- Scripts necesarios para procesar streaming (.m3u8) y el reproductor Plyr -->
+    <!-- Scripts optimizados para procesamiento diferido -->
     <script src="https://jsdelivr.net"></script>
     <script src="https://plyr.io"></script>
     <script>
-        // Configuración de las dos señales streaming conectadas a tu Ngrok permanente
         const transmisiones = [
-            { id: '#video-canal1', url: 'https://shelving-armchair-skimmer.ngrok-free.dev/live/canal1/' },
+            { id: '#video-canal1', url: 'https://ngrok-free.dev' },
             { id: '#video-canal2', url: 'https://ngrok-free.dev' }
         ];
 
@@ -160,21 +156,25 @@
             const video = document.querySelector(stream.id);
             const controlesPersonalizados = ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'];
             
-            // CORRECCIÓN PRIORITARIA PARA IPHONE: Detectar soporte nativo del sistema de Apple
-            if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = stream.url;
-                video.setAttribute('playsinline', 'true'); // Evita que iOS abra el reproductor nativo del sistema
-                new Plyr(video, { controls: controlesPersonalizados });
-            } 
-            // Configuración estándar para Android, Windows y otros navegadores
-            else if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(stream.url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    new Plyr(video, { controls: controlesPersonalizados });
-                });
-            }
+            // Inicializar la interfaz visual Plyr vacía inmediatamente (carga súper veloz)
+            const player = new Plyr(video, { controls: controlesPersonalizados });
+
+            // El video solo se conectará a tu PC cuando el usuario pulse el botón de reproducir
+            player.on('play', () => {
+                if (video.src) return; // Si ya está cargado, no hacer nada
+
+                if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    // Optimización de enlace directo nativo para iPhone (iOS)
+                    video.src = stream.url;
+                    video.load();
+                    video.play().catch(e => console.log("Auto-play bloqueado"));
+                } else if (Hls.isSupported()) {
+                    // Inyección diferida de Hls.js para Android, PC y Mac
+                    const hls = new Hls();
+                    hls.loadSource(stream.url);
+                    hls.attachMedia(video);
+                }
+            });
         });
     </script>
 </body>
