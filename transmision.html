@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transmisiones - Tabernáculo La Puerta Abierta</title>
-    <link rel="preconnect" href="https://googleapis.com">
-    <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <!-- Estilos del reproductor interactivo Plyr -->
+    <link rel="stylesheet" href="https://plyr.io" />
     <style>
         /* ==========================================
            1. CONFIGURACIÓN GLOBAL Y VARIABLES (MODOS)
@@ -58,14 +60,14 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            padding: 20px;
+            padding: 40px 20px;
             background: var(--color-fondo);
         }
         
         .container-video { 
             width: 100%; 
-            max-width: 800px; 
-            padding: 30px; 
+            max-width: 1200px; 
+            padding: 40px 30px; 
             border-radius: 35px; 
             background: var(--bg-glass); 
             backdrop-filter: blur(25px); 
@@ -75,40 +77,102 @@
             text-align: center; 
         }
 
-        h1 { font-size: 2rem; margin-bottom: 8px; font-weight: 700; }
-        p { color: var(--color-texto-secundario); font-size: 1rem; margin-bottom: 25px; }
+        h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 700; }
+        p { color: var(--color-texto-secundario); font-size: 1rem; margin-bottom: 35px; }
         
-        /* Contenedor responsivo para el reproductor de video (Mantiene proporción 16:9) */
-        .reproductor-wrap { 
-            position: relative; 
-            width: 100%; 
-            padding-bottom: 56.25%; 
-            height: 0; 
-            border-radius: 20px; 
-            overflow: hidden; 
-            border: 1px solid var(--borde-glass); 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        /* Grid responsiva para organizar los 2 canales en paralelo */
+        .grid-reproductores {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
         }
 
-        .reproductor-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .canal-box {
+            flex: 1;
+            min-width: 300px;
+            max-width: 520px;
+            text-align: left;
+        }
+
+        .canal-box h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            font-weight: 500;
+            color: var(--color-texto);
+        }
+
+        /* Envoltura Plyr para forzar bordes redondeados y estilo unificado */
+        .plyr-wrap {
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--borde-glass);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
         
-        .enlace-volver { display: inline-block; margin-top: 25px; color: var(--color-texto-secundario); text-decoration: none; font-size: 0.9rem; }
+        .enlace-volver { display: inline-block; margin-top: 35px; color: var(--color-texto-secundario); text-decoration: none; font-size: 0.9rem; }
         .enlace-volver:hover { color: var(--color-texto); }
+
+        /* Ajustes específicos para que Plyr luzca perfecto en tu diseño moderno */
+        .plyr { --plyr-color-main: #00bfff; }
     </style>
 </head>
 <body>
     <div class="wrapper-transmision">
         <div class="container-video">
             <h1>Transmisión en Vivo</h1>
-            <p>Acompáñanos en nuestras reuniones y eventos especiales</p>
+            <p>Acompáñanos en nuestras reuniones y eventos especiales (Puedes pausar o atrasar el directo)</p>
             
-            <div class="reproductor-wrap">
-                <!-- REEMPLAZA EL ENLACE DE ABAJO POR TU EMISIÓN DE YOUTUBE O FACEBOOK -->
-                <iframe src="rtmp://a.rtmp.youtube.com/live2" allowfullscreen></iframe>
+            <div class="grid-reproductores">
+                <!-- CANAL 1 -->
+                <div class="canal-box">
+                    <h3>Principal / Canal 1</h3>
+                    <div class="plyr-wrap">
+                        <video id="video-canal1" controls crossorigin playsinline></video>
+                    </div>
+                </div>
+                
+                <!-- CANAL 2 -->
+                <div class="canal-box">
+                    <h3>Secundario / Canal 2</h3>
+                    <div class="plyr-wrap">
+                        <video id="video-canal2" controls crossorigin playsinline></video>
+                    </div>
+                </div>
             </div>
             
             <a href="index.html" class="enlace-volver">← Volver al Inicio</a>
         </div>
     </div>
+
+    <!-- Scripts necesarios para procesar streaming (.m3u8) y el reproductor Plyr -->
+    <script src="https://jsdelivr.net"></script>
+    <script src="https://plyr.io"></script>
+    <script>
+        // Configuración de las dos señales streaming conectadas a tu Ngrok permanente
+        const transmisiones = [
+            { id: '#video-canal1', url: 'https://ngrok-free.dev' },
+            { id: '#video-canal2', url: 'https://ngrok-free.dev' }
+        ];
+
+        transmisiones.forEach(stream => {
+            const video = document.querySelector(stream.id);
+            const controlesPersonalizados = ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'];
+            
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(stream.url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    new Plyr(video, { controls: controlesPersonalizados });
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Compatibilidad nativa para dispositivos Apple (Safari/iOS)
+                video.src = stream.url;
+                new Plyr(video, { controls: controlesPersonalizados });
+            }
+        });
+    </script>
 </body>
 </html>
