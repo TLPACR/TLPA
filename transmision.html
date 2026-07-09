@@ -3,235 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabernáculo La Puerta Abierta - Inicio</title>
-    
-    <!-- Metaetiquetas básicas -->
-    <meta name="description" content="Sitio web oficial de Tabernáculo La Puerta Abierta.">
-
-    <!-- Fuente Tipográfica Moderna (Inter) -->
+    <title>Transmisiones - Tabernáculo La Puerta Abierta</title>
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com" rel="stylesheet">
-
+    <link href="https://googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         /* ==========================================
            1. CONFIGURACIÓN GLOBAL Y VARIABLES (MODOS)
            ========================================== */
         :root {
-            /* Modo Oscuro (Por defecto) - Negro puro con detalles minimalistas */
+            /* Modo Oscuro (Por defecto) - Negro puro sin transparencias */
+            --color-fondo-base: #000000;
             --color-fondo: #000000;
             --color-texto: #ffffff;
             --color-texto-secundario: rgba(255, 255, 255, 0.6);
             --bg-glass: rgba(255, 255, 255, 0.05);
-            --bg-dock: rgba(255, 255, 255, 0.1);
             --borde-glass: rgba(255, 255, 255, 0.15);
-            --texto-titulo: linear-gradient(to right, #ffffff, #a3a3a3);
-            --sombra: rgba(0, 0, 0, 0.8);
+            --sombra: rgba(0, 0, 0, 0.9);
         }
 
-        /* Detección automática del Modo Claro del sistema operativo (Recuperado del primer código) */
+        /* Detección automática del Modo Claro del sistema operativo */
         @media (prefers-color-scheme: light) {
             :root {
-                /* Modo Claro original - Azul cielo dinámico */
-                --color-fondo: linear-gradient(135deg, #eff6ff 0%, #bfdbfe 50%, #60a5fa 100%);
-                --color-texto: #1e3a8a;
-                --color-texto-secundario: rgba(30, 58, 138, 0.7);
-                --bg-glass: rgba(30, 58, 138, 0.06);
-                --bg-dock: rgba(30, 58, 138, 0.12);
-                --borde-glass: rgba(30, 58, 138, 0.2);
-                --texto-titulo: linear-gradient(to right, #1e3a8a, #1d4ed8);
-                --sombra: rgba(30, 58, 138, 0.15);
+                /* Modo Claro - Blanco cálido suave y elegante */
+                --color-fondo-base: #fcfbf7;
+                --color-fondo: #fcfbf7;
+                --color-texto: #1c1917;
+                --color-texto-secundario: rgba(28, 25, 23, 0.65);
+                --bg-glass: rgba(28, 25, 23, 0.04);
+                --borde-glass: rgba(28, 25, 23, 0.12);
+                --sombra: rgba(28, 25, 23, 0.08);
             }
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease; 
         }
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            font-family: 'Inter', sans-serif;
-            color: var(--color-texto);
-            background: var(--color-fondo);
-            background-attachment: fixed;
+        body { 
+            width: 100%; 
+            min-height: 100vh; 
+            font-family: 'Inter', sans-serif; 
+            color: var(--color-texto); 
+            background-color: var(--color-fondo-base); 
             overflow-x: hidden;
         }
 
-        .wrapper-web {
+        .wrapper-transmision {
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
+            width: 100%;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
             padding: 20px;
-            position: relative;
+            background: var(--color-fondo);
+        }
+        
+        .container-video { 
+            width: 100%; 
+            max-width: 800px; 
+            padding: 30px; 
+            border-radius: 35px; 
+            background: var(--bg-glass); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px); 
+            border: 1px solid var(--borde-glass); 
+            box-shadow: 0 20px 40px var(--sombra); 
+            text-align: center; 
         }
 
-        /* ==========================================
-           2. BARRA DE NAVEGACIÓN SUPERIOR (NAVBAR)
-           ========================================== */
-        .navbar {
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            border-radius: 20px;
-            background: var(--bg-glass);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--borde-glass);
-            box-shadow: 0 4px 30px var(--sombra);
-            z-index: 10;
+        h1 { font-size: 2rem; margin-bottom: 8px; font-weight: 700; }
+        p { color: var(--color-texto-secundario); font-size: 1rem; margin-bottom: 25px; }
+        
+        /* Contenedor responsivo para el reproductor de video (Mantiene proporción 16:9) */
+        .reproductor-wrap { 
+            position: relative; 
+            width: 100%; 
+            padding-bottom: 56.25%; 
+            height: 0; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            border: 1px solid var(--borde-glass); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
         }
 
-        .logo-link {
-            text-decoration: none;
-            color: inherit;
-            font-weight: 700;
-            font-size: 1.2rem;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 25px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--color-texto-secundario);
-            font-family: inherit;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--color-texto);
-        }
-
-        /* ==========================================
-           3. SECCIÓN DE CONTENIDO PRINCIPAL (HERO)
-           ========================================== */
-        .contenido-hero {
-            text-align: center;
-            max-width: 700px;
-            margin-top: 80px;
-            margin-bottom: auto;
-            padding: 0 20px;
-        }
-
-        .contenido-hero h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            letter-spacing: -1px;
-            background: var(--texto-titulo);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .contenido-hero p {
-            font-size: 1.1rem;
-            color: var(--color-texto-secundario);
-            line-height: 1.6;
-            font-weight: 300;
-        }
-
-        /* ==========================================
-           4. EL DOCK TRANSLÚCIDO ESTILO iOS (FOOTER)
-           ========================================== */
-        .contenedor-dock {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            padding-top: 40px;
-            padding-bottom: 20px;
-            position: sticky;
-            bottom: 20px;
-            z-index: 10;
-        }
-
-        .ios-dock {
-            display: flex;
-            gap: 18px;
-            padding: 14px 28px;
-            border-radius: 35px;
-            background: var(--bg-dock); 
-            backdrop-filter: blur(30px); 
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid var(--borde-glass);
-            box-shadow: 0 20px 40px var(--sombra);
-        }
-
-        .dock-item {
-            width: 55px;
-            height: 55px;
-            border-radius: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 26px;
-            text-decoration: none;
-            background: var(--bg-glass);
-            border: 1px solid var(--borde-glass);
-            cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .dock-item:hover {
-            transform: scale(1.25) translateY(-12px);
-        }
-
-        /* Ajustes responsivos para móviles */
-        @media (max-width: 600px) {
-            .navbar { padding: 12px 20px; }
-            .contenido-hero h1 { font-size: 2rem; }
-            .nav-links { gap: 15px; }
-            .nav-links a { font-size: 0.85rem; }
-            .logo-link { font-size: 1rem; }
-            .ios-dock { gap: 12px; padding: 10px 18px; }
-            .dock-item { width: 50px; height: 50px; font-size: 22px; }
-        }
+        .reproductor-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        
+        .enlace-volver { display: inline-block; margin-top: 25px; color: var(--color-texto-secundario); text-decoration: none; font-size: 0.9rem; }
+        .enlace-volver:hover { color: var(--color-texto); }
     </style>
 </head>
 <body>
-
-    <div class="wrapper-web">
-        
-        <!-- Barra de Navegación Superior Conectada -->
-        <header class="navbar">
-            <a href="index.html" class="logo-link">Tabernáculo La Puerta Abierta</a>
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="index.html" class="active">Inicio</a></li>
-                </ul>
-            </nav>
-        </header>
-
-        <!-- Contenido Central de la Página de Inicio -->
-        <main class="contenido-hero">
-            <h1>Dios les Bendiga</h1>
-            <p>Toca sobre el icono 📺 para ver la Transmisión</p>
-        </main>
-
-        <!-- El menú inferior Dock con Enlaces a los Archivos Correspondientes -->
-        <footer class="contenedor-dock">
-            <nav class="ios-dock">
-                <a href="transmision.html" class="dock-item" title="Transmisión">📺</a>
-                <a href="https://branham.org/es/quoteoftheday" class="dock-item" title="Lecturas">📖</a>
-            </nav>
-        </footer>
-
+    <div class="wrapper-transmision">
+        <div class="container-video">
+            <h1>Transmisión en Vivo</h1>
+            <p>Acompáñanos en nuestras reuniones y eventos especiales</p>
+            
+            <div class="reproductor-wrap">
+                <!-- REEMPLAZA EL ENLACE DE ABAJO POR TU EMISIÓN DE YOUTUBE O FACEBOOK -->
+                <iframe src="https://kid-lucas-capitol-hours.trycloudflare.com/live/canal1/" allowfullscreen></iframe>
+            </div>
+            
+            <a href="index.html" class="enlace-volver">← Volver al Inicio</a>
+        </div>
     </div>
-
 </body>
 </html>
