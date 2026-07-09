@@ -21,6 +21,7 @@
             --bg-glass: rgba(255, 255, 255, 0.05);
             --borde-glass: rgba(255, 255, 255, 0.15);
             --sombra: rgba(0, 0, 0, 0.9);
+            --color-primario: #00bfff;
         }
 
         @media (prefers-color-scheme: light) {
@@ -77,6 +78,64 @@
         h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 700; }
         p { color: var(--color-texto-secundario); font-size: 1rem; margin-bottom: 35px; }
         
+        /* Formulario de Verificación */
+        .login-box {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .input-password {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--borde-glass);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--color-texto);
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+            margin-bottom: 15px;
+        }
+
+        .btn-verificar {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: var(--color-primario);
+            color: #000;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            margin-bottom: 15px;
+        }
+
+        .btn-verificar:hover { transform: scale(1.02); opacity: 0.9; }
+
+        /* Botón de Ngrok */
+        .btn-ngrok {
+            width: 100%;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid var(--borde-glass);
+            background: transparent;
+            color: var(--color-texto-secundario);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .btn-ngrok:hover { color: var(--color-texto); border-color: var(--color-texto); }
+
+        .error-msg { color: #ff4a4a; font-size: 0.9rem; margin-top: 10px; display: none; }
+
+        /* Contenido de los Videos (Oculto al inicio) */
+        .contenido-privado {
+            display: none;
+            width: 100%;
+        }
+
         .grid-reproductores {
             display: flex;
             flex-wrap: wrap;
@@ -117,24 +176,38 @@
     <div class="wrapper-transmision">
         <div class="container-video">
             <h1>Transmisión en Vivo</h1>
-            <p>Acompáñanos en nuestras reuniones y eventos especiales (Puedes pausar o atrasar el directo)</p>
             
-            <div class="grid-reproductores">
-                <!-- CANAL 1 -->
-                <div class="canal-box">
-                    <h3>Principal / Canal 1</h3>
-                    <div class="plyr-wrap">
-                        <!-- preload="none": Evita la descarga automática del video al abrir la web -->
-                        <video id="video-canal1" controls crossorigin playsinline preload="none"></video>
-                    </div>
-                </div>
+            <!-- PANTALLA 1: FORMULARIO DE VERIFICACIÓN -->
+            <div id="pantalla-login" class="login-box">
+                <p>Introduce la contraseña de la iglesia para acceder.</p>
+                <input type="password" id="password-input" class="input-password" placeholder="Contraseña">
+                <button onclick="verificarUsuario()" class="btn-verificar">Ingresar</button>
                 
-                <!-- CANAL 2 -->
-                <div class="canal-box">
-                    <h3>Secundario / Canal 2</h3>
-                    <div class="plyr-wrap">
-                        <!-- preload="none": Evita la descarga automática del video al abrir la web -->
-                        <video id="video-canal2" controls crossorigin playsinline preload="none"></video>
+                <!-- BOTÓN DE DESBLOQUEO NGROK INTEGRADO -->
+                <button onclick="desbloquearNgrok()" class="btn-ngrok">¿No carga el video? Autorizar señal aquí</button>
+                
+                <div id="error-texto" class="error-msg">Contraseña incorrecta. Inténtalo de nuevo.</div>
+            </div>
+
+            <!-- PANTALLA 2: REPRODUCTORES DE VIDEO -->
+            <div id="pantalla-videos" class="contenido-privado">
+                <p>Acompáñanos en nuestras reuniones (Puedes pausar o atrasar el directo)</p>
+                
+                <div class="grid-reproductores">
+                    <!-- CANAL 1 -->
+                    <div class="canal-box">
+                        <h3>Principal / Canal 1</h3>
+                        <div class="plyr-wrap">
+                            <video id="video-canal1" controls crossorigin playsinline preload="none"></video>
+                        </div>
+                    </div>
+                    
+                    <!-- CANAL 2 -->
+                    <div class="canal-box">
+                        <h3>Secundario / Canal 2</h3>
+                        <div class="plyr-wrap">
+                            <video id="video-canal2" controls crossorigin playsinline preload="none"></video>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -143,39 +216,54 @@
         </div>
     </div>
 
-    <!-- Scripts optimizados para procesamiento diferido -->
+    <!-- Scripts obligatorios -->
     <script src="https://jsdelivr.net"></script>
     <script src="https://plyr.io"></script>
     <script>
-        const transmisiones = [
-            { id: '#video-canal1', url: 'https://ngrok-free.dev' },
-            { id: '#video-canal2', url: 'https://ngrok-free.dev' }
-        ];
+        // CONFIGURACIÓN: Cambia aquí la contraseña y tu enlace
+        const CONFIG = {
+            claveAcceso: "puerta123", 
+            urlCanal1: "https://ngrok-free.dev", 
+            urlCanal2: "https://ngrok-free.dev",
+            urlDesbloqueo: "https://ngrok-free.dev" // Ruta para el pop-up de Ngrok
+        };
 
-        transmisiones.forEach(stream => {
-            const video = document.querySelector(stream.id);
-            const controlesPersonalizados = ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'];
+        // Función para abrir la autorización de Ngrok en una ventana pequeña flotante
+        function desbloquearNgrok() {
+            const ancho = 500;
+            const alto = 600;
+            const izquierda = (screen.width / 2) - (ancho / 2);
+            const arriba = (screen.height / 2) - (alto / 2);
             
-            // Inicializar la interfaz visual Plyr vacía inmediatamente (carga súper veloz)
-            const player = new Plyr(video, { controls: controlesPersonalizados });
+            window.open(
+                CONFIG.urlDesbloqueo, 
+                "DesbloqueoNgrok", 
+                `width=${ancho},height=${alto},top=${arriba},left=${izquierda},scrollbars=yes,resizable=yes`
+            );
+        }
 
-            // El video solo se conectará a tu PC cuando el usuario pulse el botón de reproducir
-            player.on('play', () => {
-                if (video.src) return; // Si ya está cargado, no hacer nada
+        // Función para validar la contraseña
+        function verificarUsuario() {
+            const input = document.getElementById("password-input").value;
+            const errorTexto = document.getElementById("error-texto");
 
-                if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    // Optimización de enlace directo nativo para iPhone (iOS)
-                    video.src = stream.url;
-                    video.load();
-                    video.play().catch(e => console.log("Auto-play bloqueado"));
-                } else if (Hls.isSupported()) {
-                    // Inyección diferida de Hls.js para Android, PC y Mac
-                    const hls = new Hls();
-                    hls.loadSource(stream.url);
-                    hls.attachMedia(video);
-                }
-            });
+            if (input === CONFIG.claveAcceso) {
+                document.getElementById("pantalla-login").style.display = "none";
+                document.getElementById("pantalla-videos").style.display = "block";
+                inicializarReproductores();
+            } else {
+                errorTexto.style.display = "block";
+            }
+        }
+
+        document.getElementById("password-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") { verificarUsuario(); }
         });
-    </script>
-</body>
-</html>
+
+        function inicializarReproductores() {
+            const transmisiones = [
+                { id: '#video-canal1', url: CONFIG.urlCanal1 },
+                { id: '#video-canal2', url: CONFIG.urlCanal2 }
+            ];
+
+            transmisiones.forEach(stream => {
