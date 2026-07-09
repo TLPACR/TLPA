@@ -78,7 +78,6 @@
         h1 { font-size: 2.2rem; margin-bottom: 8px; font-weight: 700; }
         p { color: var(--color-texto-secundario); font-size: 1rem; margin-bottom: 35px; }
         
-        /* Grid responsiva para organizar los 2 canales en paralelo */
         .grid-reproductores {
             display: flex;
             flex-wrap: wrap;
@@ -126,7 +125,8 @@
                 <div class="canal-box">
                     <h3>Principal / Canal 1</h3>
                     <div class="plyr-wrap">
-                        <video id="video-canal1" controls crossorigin playsinline preload="none"></video>
+                        <!-- Se cambió a preload="metadata" para solucionar el error de pantalla negra sin saturar la red -->
+                        <video id="video-canal1" controls crossorigin playsinline preload="metadata"></video>
                     </div>
                 </div>
                 
@@ -134,7 +134,8 @@
                 <div class="canal-box">
                     <h3>Secundario / Canal 2</h3>
                     <div class="plyr-wrap">
-                        <video id="video-canal2" controls crossorigin playsinline preload="none"></video>
+                        <!-- Se cambió a preload="metadata" para solucionar el error de pantalla negra sin saturar la red -->
+                        <video id="video-canal2" controls crossorigin playsinline preload="metadata"></video>
                     </div>
                 </div>
             </div>
@@ -143,17 +144,16 @@
         </div>
     </div>
 
-    <!-- Scripts obligatorios -->
+    <!-- Scripts de video e interfaz -->
     <script src="https://jsdelivr.net"></script>
     <script src="https://plyr.io"></script>
     <script>
-        // CONFIGURACIÓN: Reemplaza abajo con tu enlace real de Cloudflare (.trycloudflare.com)
+        // CONFIGURACIÓN: Recuerda reconfigurar aquí tus enlaces de Cloudflare cada vez que enciendas la PC
         const CONFIG = {
             urlCanal1: "https://continuity-limit-dive-integration.trycloudflare.com/live/canal1/", 
             urlCanal2: "https://continuity-limit-dive-integration.trycloudflare.com/live/canal2/"
         };
 
-        // Inicialización automática de reproductores de forma diferida (al dar Play)
         const transmisiones = [
             { id: '#video-canal1', url: CONFIG.urlCanal1 },
             { id: '#video-canal2', url: CONFIG.urlCanal2 }
@@ -162,23 +162,25 @@
         transmisiones.forEach(stream => {
             const video = document.querySelector(stream.id);
             const controlesPersonalizados = ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'];
-            const player = new Plyr(video, { controls: controlesPersonalizados });
-
-            player.on('play', () => {
-                if (video.src) return; // Evita recargas duplicadas si ya está cargado
-
-                if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    // Carga nativa optimizada para iPhones (iOS/Safari)
-                    video.src = stream.url;
-                    video.load();
-                    video.play().catch(e => console.log("Bloqueo iOS"));
-                } else if (Hls.isSupported()) {
-                    // Carga mediante Hls.js para Android, PC y Mac
-                    const hls = new Hls();
-                    hls.loadSource(stream.url);
-                    hls.attachMedia(video);
-                }
-            });
+            
+            // Inyectar el video en el motor HLS de inmediato de forma pasiva (autoStartLoad: false evita descargas iniciales pesadas)
+            if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Configuración limpia para iPhones (iOS)
+                video.src = stream.url;
+                new Plyr(video, { controls: controlesPersonalizados });
+            } else if (Hls.isSupported()) {
+                // Configuración optimizada para Android y PC: no precarga datos hasta presionar reproducir
+                const hls = new Hls({ autoStartLoad: false }); 
+                hls.loadSource(stream.url);
+                hls.attachMedia(video);
+                
+                const player = new Plyr(video, { controls: controlesPersonalizados });
+                
+                // Forzar la conexión real con tu PC únicamente cuando el usuario presione Play
+                player.on('play', () => {
+                    hls.startLoad();
+                });
+            }
         });
     </script>
 </body>
