@@ -29,18 +29,18 @@
             --sombra: rgba(0, 0, 0, 0.8);
         }
 
-        /* Detección automática del Modo Claro del sistema operativo */
+        /* Detección automática del Modo Claro del sistema operativo (Recuperado del primer código) */
         @media (prefers-color-scheme: light) {
             :root {
-                /* Modo Claro - Blanco cálido suave y elegante */
-                --color-fondo: #fcfbf7;
-                --color-texto: #1c1917;
-                --color-texto-secundario: rgba(28, 25, 23, 0.65);
-                --bg-glass: rgba(28, 25, 23, 0.04);
-                --bg-dock: rgba(28, 25, 23, 0.08);
-                --borde-glass: rgba(28, 25, 23, 0.12);
-                --texto-titulo: linear-gradient(to right, #1c1917, #44403c);
-                --sombra: rgba(28, 25, 23, 0.08);
+                /* Modo Claro original - Azul cielo dinámico */
+                --color-fondo: linear-gradient(135deg, #eff6ff 0%, #bfdbfe 50%, #60a5fa 100%);
+                --color-texto: #1e3a8a;
+                --color-texto-secundario: rgba(30, 58, 138, 0.7);
+                --bg-glass: rgba(30, 58, 138, 0.06);
+                --bg-dock: rgba(30, 58, 138, 0.12);
+                --borde-glass: rgba(30, 58, 138, 0.2);
+                --texto-titulo: linear-gradient(to right, #1e3a8a, #1d4ed8);
+                --sombra: rgba(30, 58, 138, 0.15);
             }
         }
 
@@ -57,6 +57,7 @@
             font-family: 'Inter', sans-serif;
             color: var(--color-texto);
             background: var(--color-fondo);
+            background-attachment: fixed;
             overflow-x: hidden;
         }
 
@@ -233,4 +234,4 @@
     </div>
 
 </body>
-<
+</html>
