@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transmisiones - Tabernáculo La Puerta Abierta</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
     <!-- Estilos del reproductor interactivo Plyr -->
     <link rel="stylesheet" href="https://plyr.io" />
     <style>
@@ -152,25 +152,28 @@
     <script>
         // Configuración de las dos señales streaming conectadas a tu Ngrok permanente
         const transmisiones = [
-            { id: '#video-canal1', url: 'https://shelving-armchair-skimmer.ngrok-free.dev/live/canal1' },
-            { id: '#video-canal2', url: 'https://shelving-armchair-skimmer.ngrok-free.dev/live/canal2' }
+            { id: '#video-canal1', url: 'https://ngrok-free.dev' },
+            { id: '#video-canal2', url: 'https://ngrok-free.dev' }
         ];
 
         transmisiones.forEach(stream => {
             const video = document.querySelector(stream.id);
             const controlesPersonalizados = ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'];
             
-            if (Hls.isSupported()) {
+            // CORRECCIÓN PRIORITARIA PARA IPHONE: Detectar soporte nativo del sistema de Apple
+            if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = stream.url;
+                video.setAttribute('playsinline', 'true'); // Evita que iOS abra el reproductor nativo del sistema
+                new Plyr(video, { controls: controlesPersonalizados });
+            } 
+            // Configuración estándar para Android, Windows y otros navegadores
+            else if (Hls.isSupported()) {
                 const hls = new Hls();
                 hls.loadSource(stream.url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() {
                     new Plyr(video, { controls: controlesPersonalizados });
                 });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // Compatibilidad nativa para dispositivos Apple (Safari/iOS)
-                video.src = stream.url;
-                new Plyr(video, { controls: controlesPersonalizados });
             }
         });
     </script>
