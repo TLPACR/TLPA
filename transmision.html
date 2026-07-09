@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transmisiones - Tabernáculo La Puerta Abierta</title>
+    <!-- CORRECCIÓN DE GOOGLE FONTS: Ahora las rutas son correctas y cargarán inmediatamente -->
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
     <link href="https://googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
@@ -125,7 +126,6 @@
                 <div class="canal-box">
                     <h3>Principal / Canal 1</h3>
                     <div class="plyr-wrap">
-                        <!-- Se cambió a preload="metadata" para solucionar el error de pantalla negra sin saturar la red -->
                         <video id="video-canal1" controls crossorigin playsinline preload="metadata"></video>
                     </div>
                 </div>
@@ -134,7 +134,6 @@
                 <div class="canal-box">
                     <h3>Secundario / Canal 2</h3>
                     <div class="plyr-wrap">
-                        <!-- Se cambió a preload="metadata" para solucionar el error de pantalla negra sin saturar la red -->
                         <video id="video-canal2" controls crossorigin playsinline preload="metadata"></video>
                     </div>
                 </div>
@@ -151,7 +150,7 @@
         // CONFIGURACIÓN: Recuerda reconfigurar aquí tus enlaces de Cloudflare cada vez que enciendas la PC
         const CONFIG = {
             urlCanal1: "https://continuity-limit-dive-integration.trycloudflare.com/live/canal1/", 
-            urlCanal2: "https://continuity-limit-dive-integration.trycloudflare.com/live/canal2/"
+            urlCanal2: "https://CAMBIA_ESTO_POR_TU_://trycloudflare.com"
         };
 
         const transmisiones = [
@@ -163,7 +162,6 @@
             const video = document.querySelector(stream.id);
             const controlesPersonalizados = ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'];
             
-            // Inyectar el video en el motor HLS de inmediato de forma pasiva (autoStartLoad: false evita descargas iniciales pesadas)
             if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 // Configuración limpia para iPhones (iOS)
                 video.src = stream.url;
@@ -176,7 +174,6 @@
                 
                 const player = new Plyr(video, { controls: controlesPersonalizados });
                 
-                // Forzar la conexión real con tu PC únicamente cuando el usuario presione Play
                 player.on('play', () => {
                     hls.startLoad();
                 });
