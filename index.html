@@ -11,36 +11,36 @@
     <!-- Fuente Tipográfica Moderna (Inter) -->
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://googleapis.com" rel="stylesheet">
 
     <style>
         /* ==========================================
            1. CONFIGURACIÓN GLOBAL Y VARIABLES (MODOS)
            ========================================== */
         :root {
-            /* Modo Oscuro (Por defecto) - Cobalto profundo de alto contraste */
-            --color-fondo: linear-gradient(135deg, #020617 0%, #1e3a8a 45%, #3b82f6 100%);
+            /* Modo Oscuro (Por defecto) - Negro puro con detalles minimalistas */
+            --color-fondo: #000000;
             --color-texto: #ffffff;
-            --color-texto-secundario: rgba(255, 255, 255, 0.7);
-            --bg-glass: rgba(255, 255, 255, 0.07);
-            --bg-dock: rgba(255, 255, 255, 0.18);
-            --borde-glass: rgba(255, 255, 255, 0.25);
-            --texto-titulo: linear-gradient(to right, #ffffff, #93c5fd);
-            --sombra: rgba(0, 0, 0, 0.4);
+            --color-texto-secundario: rgba(255, 255, 255, 0.6);
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            --bg-dock: rgba(255, 255, 255, 0.1);
+            --borde-glass: rgba(255, 255, 255, 0.15);
+            --texto-titulo: linear-gradient(to right, #ffffff, #a3a3a3);
+            --sombra: rgba(0, 0, 0, 0.8);
         }
 
         /* Detección automática del Modo Claro del sistema operativo */
         @media (prefers-color-scheme: light) {
             :root {
-                /* Modo Claro - Azul cielo dinámico */
-                --color-fondo: linear-gradient(135deg, #eff6ff 0%, #bfdbfe 50%, #60a5fa 100%);
-                --color-texto: #1e3a8a;
-                --color-texto-secundario: rgba(30, 58, 138, 0.7);
-                --bg-glass: rgba(30, 58, 138, 0.06);
-                --bg-dock: rgba(30, 58, 138, 0.12);
-                --borde-glass: rgba(30, 58, 138, 0.2);
-                --texto-titulo: linear-gradient(to right, #1e3a8a, #1d4ed8);
-                --sombra: rgba(30, 58, 138, 0.15);
+                /* Modo Claro - Blanco cálido suave y elegante */
+                --color-fondo: #fcfbf7;
+                --color-texto: #1c1917;
+                --color-texto-secundario: rgba(28, 25, 23, 0.65);
+                --bg-glass: rgba(28, 25, 23, 0.04);
+                --bg-dock: rgba(28, 25, 23, 0.08);
+                --borde-glass: rgba(28, 25, 23, 0.12);
+                --texto-titulo: linear-gradient(to right, #1c1917, #44403c);
+                --sombra: rgba(28, 25, 23, 0.08);
             }
         }
 
@@ -48,7 +48,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background 0.4s ease, color 0.4s ease;
+            transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
         }
 
         body, html {
@@ -57,7 +57,6 @@
             font-family: 'Inter', sans-serif;
             color: var(--color-texto);
             background: var(--color-fondo);
-            background-attachment: fixed;
             overflow-x: hidden;
         }
 
@@ -227,7 +226,7 @@
         <footer class="contenedor-dock">
             <nav class="ios-dock">
                 <a href="transmision.html" class="dock-item" title="Transmisión">📺</a>
-                <a href="https://branham.org/es/quoteoftheday" class="dock-item" title="Lecturas">📖</a>
+                <a href="https://branham.org" class="dock-item" title="Lecturas">📖</a>
             </nav>
         </footer>
 
